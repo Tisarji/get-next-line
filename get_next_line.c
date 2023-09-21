@@ -6,71 +6,79 @@
 /*   By: jikarunw <jikarunw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/19 12:15:06 by jikarunw          #+#    #+#             */
-/*   Updated: 2023/09/20 20:56:46 by jikarunw         ###   ########.fr       */
+/*   Updated: 2023/09/22 02:14:35 by jikarunw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-static char	*ft_read_file_size(int fd, char *buffer, char *data_buffer)
+static void	ft_free(char **ptr)
 {
-	int		read_line;
-	char	*temp;
-
-	read_line = 1;
-	while (read_line != '\0')
-	{
-		read_line = read(fd, buffer, BUFFER_SIZE);
-		if (read_line == -1)
-			return (NULL);
-		else if (read_line == 0)
-			break ;
-		data_buffer[read_line] = '\0';
-		if (!data_buffer)
-			data_buffer = ft_strdup("");
-		temp = data_buffer;
-		data_buffer = ft_strjoin(temp, buffer);
-		free(temp);
-		temp = NULL;
-		if (ft_strchr(buffer, '\n'))
-			break ;
-	}
-	return (data_buffer);
+	free(*ptr);
+	*ptr = NULL;
 }
 
-static char	*ft_extract_line(char *text)
+static char	*ft_get_line(char **current_buffer, char **line)
 {
-	size_t	len;
-	char	*line;
+	char	*next_buffer;
+	int		i;
 
-	len = 0;
-	while (text[len] != '\n' && text[len] != '\0')
-		len++;
-	if (text[len] != '\0' || text[1] == '\0')
-		return (NULL);
-	line = ft_substr(text, len + 1, ft_strlen(text) - len);
-	if (*line == '\0')
+	i = 0;
+	next_buffer = NULL;
+	while (*(*current_buffer + i) != '\n' && *(*current_buffer + i) != '\0')
+		i++;
+	if (*(*current_buffer + i) == '\n')
 	{
-		free(line);
-		line = NULL;
+		i++;
+		*line = ft_substr(*current_buffer, 0, i);
+		next_buffer = ft_strdup(*current_buffer + i);
 	}
-	text[len + 1] = '\0';
-	return (line);
+	else
+		*line = ft_strdup(*current_buffer);
+	ft_free(current_buffer);
+	return (next_buffer);
+}
+
+static int	ft_read_line(int fd, char **r_buffer, char **bk_buffer, char **line)
+{
+	char	*temp_buffer;
+	int		bytes_read;
+
+	bytes_read = 1;
+	while (!ft_strchr(*bk_buffer, '\n') && bytes_read)
+	{
+		bytes_read = read(fd, *r_buffer, BUFFER_SIZE);
+		(*r_buffer)[bytes_read] = '\0';
+		temp_buffer = *bk_buffer;
+		*bk_buffer = ft_strjoin(temp_buffer, *r_buffer);
+		free(temp_buffer);
+	}
+	ft_free(line);
+	*bk_buffer = ft_get_line(bk_buffer, line);
+	if (!(**line))
+		ft_free(line);
+	return (bytes_read);
 }
 
 char	*get_next_line(int fd)
 {
-	char		*line;
+	static char	*buffer_backup = NULL;
 	char		*buffer;
-	static char	*data = NULL;
+	char		*line;
 
-	line = NULL;
-	if (fd < 0 || BUFFER_SIZE <= 0)
+	if (fd < 0 || fd >= 1024 || BUFFER_SIZE <= 0)
 		return (NULL);
-	buffer = (char *)malloc(sizeof(char) * (BUFFER_SIZE +1));
+	buffer = (char *)malloc(sizeof(char *) * (BUFFER_SIZE + 1));
 	if (!buffer)
 		return (NULL);
-	data = ft_read_file_size(fd, buffer, data);
-    line = ft_extract_line(data);
+	if (read(fd, buffer, 0) < 0)
+	{
+		free(buffer);
+		return (NULL);
+	}
+	if (!buffer_backup)
+		buffer_backup = ft_strdup("");
+	if (!ft_read_line(fd, &buffer, &buffer_backup, &line) && !line)
+		return (NULL);
 	return (line);
 }
