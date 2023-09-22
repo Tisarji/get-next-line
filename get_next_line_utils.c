@@ -6,7 +6,7 @@
 /*   By: jikarunw <jikarunw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/19 12:15:04 by jikarunw          #+#    #+#             */
-/*   Updated: 2023/09/23 04:12:19 by jikarunw         ###   ########.fr       */
+/*   Updated: 2023/09/23 04:17:49 by jikarunw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,10 +37,10 @@ char	*ft_strjoin(char *s1, char const *s2)
 
 size_t	ft_strlen(const char *str)
 {
-	const char	*ptr;
+	char const	*ptr;
 
 	ptr = str;
-	while (ptr)
+	while (*ptr)
 		++ptr;
 	return ((size_t)(ptr - str));
 }
@@ -61,31 +61,22 @@ char	*ft_strchr(const char *str, int c)
 	return ((void *) 0);
 }
 
-char	*ft_strdup(const char *src)
+char	*ft_strdup(const char *str)
 {
-	size_t	i;
-	size_t	len;
 	char	*dup;
+	char	*ptr;
 
-	i = 0;
-	len = 0;
-	if (!src)
-		return (NULL);
-	while (src[len])
-		len++;
-	dup = (char *)malloc(sizeof(char) * (len + 1));
+	dup = malloc (sizeof (*dup) * (ft_strlen(str) + 1));
 	if (!dup)
 		return (NULL);
-	while (src[i])
-	{
-		dup[i] = src[i];
-		++i;
-	}
-	dup[i] = '\0';
+	ptr = dup;
+	while (*str)
+		*ptr++ = *str++;
+	*ptr = 0;
 	return (dup);
 }
 
-char	*ft_substr(const char *str, unsigned int start, size_t size)
+char	*ft_substr(char const *str, unsigned int start, size_t size)
 {
 	size_t	len;
 	char	*sub;
