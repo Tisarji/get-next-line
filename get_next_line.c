@@ -6,7 +6,7 @@
 /*   By: jikarunw <jikarunw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/19 12:15:06 by jikarunw          #+#    #+#             */
-/*   Updated: 2023/09/23 04:12:09 by jikarunw         ###   ########.fr       */
+/*   Updated: 2023/09/23 14:23:37 by jikarunw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ static char	*ft_read_buffer(char *temp, int fd, char *buf)
 		}
 		buf[r] = 0;
 		temp = ft_strjoin(temp, buf);
-		if(!temp)
+		if (!temp)
 		{
 			free(buf);
 			return (NULL);
@@ -68,7 +68,7 @@ char	*get_next_line(int fd)
 		return (NULL);
 	if (!temp[fd])
 		temp[fd] = ft_strdup("");
-	if(!temp[fd])
+	if (!temp[fd])
 		return (NULL);
 	buffer = malloc(sizeof(*buffer) * (BUFFER_SIZE + 1));
 	if (!buffer)
