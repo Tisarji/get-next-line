@@ -6,16 +6,16 @@
 /*   By: jikarunw <jikarunw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/19 12:15:06 by jikarunw          #+#    #+#             */
-/*   Updated: 2023/09/23 14:23:37 by jikarunw         ###   ########.fr       */
+/*   Updated: 2023/10/10 15:08:17 by jikarunw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-static char	*ft_next_buffer(char **temp)
+static char *ft_next_buffer(char **temp)
 {
-	char	*line;
-	char	*ptr;
+	char *line;
+	char *ptr;
 
 	ptr = *temp;
 	while (*ptr && *ptr != '\n')
@@ -24,7 +24,7 @@ static char	*ft_next_buffer(char **temp)
 	line = ft_substr(*temp, 0, (size_t)(ptr - *temp));
 	if (!line)
 	{
-		free (*temp);
+		free(*temp);
 		return (NULL);
 	}
 	ptr = ft_substr(ptr, 0, ft_strlen(ptr));
@@ -33,9 +33,9 @@ static char	*ft_next_buffer(char **temp)
 	return (line);
 }
 
-static char	*ft_read_buffer(char *temp, int fd, char *buf)
+static char *ft_read_buffer(char *temp, int fd, char *buf)
 {
-	ssize_t	r;
+	ssize_t r;
 
 	r = 1;
 	while (r && !ft_strchr(temp, '\n'))
@@ -59,10 +59,10 @@ static char	*ft_read_buffer(char *temp, int fd, char *buf)
 	return (temp);
 }
 
-char	*get_next_line(int fd)
+char *get_next_line(int fd)
 {
-	static char	*temp[FD_MAX];
-	char		*buffer;
+	static char *temp[FD_MAX];
+	char *buffer;
 
 	if (fd == -1 || BUFFER_SIZE < 1)
 		return (NULL);
